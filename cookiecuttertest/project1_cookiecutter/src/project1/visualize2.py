@@ -1,14 +1,13 @@
-# --- add these two lines at the very top ---
 import matplotlib
-matplotlib.use("Agg")  # headless-safe backend
+matplotlib.use("Agg")  
 
 import matplotlib.pyplot as plt
 import torch
 import typer
 from pathlib import Path
-from .model import MyAwesomeModel  # you already switched to relative import
+from .model import MyAwesomeModel  
 
-DEVICE = torch.device("cpu")  # be conservative for viz
+DEVICE = torch.device("cpu") 
 
 def visualize(model_checkpoint: str, figure_name: str = "embeddings.png") -> None:
     """Visualize model predictions."""
@@ -17,13 +16,13 @@ def visualize(model_checkpoint: str, figure_name: str = "embeddings.png") -> Non
     model.load_state_dict(state)
     model.eval()
 
-    # If you want pre-logit features, your classifier layer is `fc1`
+    
     if hasattr(model, "fc1"):
         model.fc1 = torch.nn.Identity()
 
-    # Resolve paths relative to project root
+   
     root = Path(__file__).resolve().parents[2]
-    data_dir = root / "data" / "processed"        # adjust if you use a subfolder
+    data_dir = root / "data" / "processed"       
     fig_dir = root / "reports" / "figures"
     fig_dir.mkdir(parents=True, exist_ok=True)
 
@@ -41,7 +40,7 @@ def visualize(model_checkpoint: str, figure_name: str = "embeddings.png") -> Non
     embeddings = torch.cat(embs).numpy()
     targets = torch.cat(tgts).numpy()
 
-    # Start with PCA->2D only (TSNE often triggers segfaults on mac with some BLAS builds)
+    # GPT suggestion : Start with PCA->2D only (TSNE often triggers segfaults on mac with some BLAS builds)
     from sklearn.decomposition import PCA
     if embeddings.shape[1] > 2:
         embeddings = PCA(n_components=2).fit_transform(embeddings)
